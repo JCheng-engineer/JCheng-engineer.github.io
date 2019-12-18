@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="John Doe">
+    
+    
+    
+    
+    
+    
+    <title>sysrq | Hexo</title>
+    <!-- inject:style -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <!-- endinject -->
+    <style>
+        .cube-loading {
+            top: 0;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: url('/images/lg/loading.gif') no-repeat center center;
+            background-color: rgba(0,0,0,.7);
+        }
+
+        .cube-loading.out {
+            display: none;
+        }
+
+        .cube-loading:before {
+            display: block;
+            content: 'Loading';
+            position: relative;
+            width: 100%;
+            top: 50%;
+            right: -50%;
+            color: #fff;
+        }
+
+        @media(max-width: 768px) {
+            .cube-loading:before {
+                font-size: 1.2em;
+                transform: translate(-24px,20px);
+                -webkit-transform: translate(-24px,20px);
+                -o-transform: translate(-24px,20px);
+                -ms-transform: translate(-24px,20px);
+            }
+        }
+
+        @media(min-width: 768px) {
+            .cube-loading:before {
+
+            }
+        }
+    </style>
+    
+<meta name="generator" content="Hexo 4.1.1"></head>
+<body>
+<div class="cube-body">
+    <nav id="cube-top-memu" class="cube-menu">
+    <ul class="cube-menu-collapse">
+        
+        <li>
+            <i class="cube-icon cube-icon-home" aria-hidden="true"></i>
+            <a href="/">首页</a>
+        </li>
+        
+        <li>
+            <i class="cube-icon cube-icon-archive" aria-hidden="true"></i>
+            <a href="/archives">归档</a>
+        </li>
+        
+        <li>
+            <i class="cube-icon cube-icon-categories" aria-hidden="true"></i>
+            <a href="/categories">分类</a>
+        </li>
+        
+        <li>
+            <i class="cube-icon cube-icon-tags" aria-hidden="true"></i>
+            <a href="/tags">标签</a>
+        </li>
+        
+        <li>
+            <i class="cube-icon cube-icon-about" aria-hidden="true"></i>
+            <a href="/about-me">关于我</a>
+        </li>
+        
+    </ul>
+</nav>
+<nav class="cube-side-menu" id="cube-side-menu">
+    <ul class="cube-menu-list">
+        
+        <li>
+            <a class="lrc-control">Open Lyrics</a>
+        </li>
+        
+        <li>
+            <a class="scroll-to-top">Top</a>
+        </li>
+    </ul>
+</nav>
+    <header class="cube-header" id="cube-header">
+    <img src=" http://cube-1252774894.cosgz.myqcloud.com/background.png " alt="头部背景图片">
+    
+    <div class="cube-type">
+        <span class="cube-typed-title">senrenbankaの部落格</span>
+        <span class="cube-typed-cursor">|</span>
+    </div>
+    
+</header>
+
+    <style>
+        nav.cube-menu:before {
+            content: '';
+            visibility: hidden;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 44px;
+        
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+        
+            z-index: -1;
+            background-image: url('http://cube-1252774894.cosgz.myqcloud.com/background.png');
+            background-repeat: no-repeat;
+            background-position: center -356px;
+            background-size: cover;
+            background-color: transparent;
+        }
+
+        header.cube-background.cube-header-background {
+            visibility: hidden;
+            background-image: url('http://cube-1252774894.cosgz.myqcloud.com/background.png');
+            background-position: center -400px;
+        }
+    </style>
+    <header class="cube-background cube-header-background">
+        
+        <div class="cube-type">
+            <span class="cube-typed-title">senrenbankaの部落格</span>
+            <span class="cube-typed-cursor">|</span>
+        </div>
+        
+    </header>
+    <div class="load-header-background"></div>
+    <script>
+        (function (window) {
+
+            window.headerModule = {}
+            window.headerModule.image = {
+                width: '2000',
+                height: '1414'
+            }
+
+        })(window)
+    </script>
+    
+    <div class="cube-content">
+        <div class="cube-left">
+            <div class="cube-article">
+    <h1 class="title">sysrq</h1>
+    
+    <div class="cube-article-header">
+        <div class="cube-article-date">
+            <i class="cube-icon cube-icon-date" aria-hidden="true"></i>
+            <!-- moment.js对象 -->
+            2019-12-18
+        </div>
+        <div class="cube-article-tags">
+    <i class="cube-icon cube-icon-tag" aria-hidden="true"></i>
+    
+</div>
+    </div>
+    
+    <div class="cube-article-content cube-markdown">
+        
+        <h1 id="魔键触发方式修改"><a href="#魔键触发方式修改" class="headerlink" title="魔键触发方式修改"></a>魔键触发方式修改</h1><p>首先用于系统shell失去响应时进行问题诊断。目前的CPU架构和串口终端工具对ctrl+break触发sysrq适配不好，所以CGEL开发了新触发方式，sysrq的新触发方式为 ctrl+6 再加命令功能键。命令功能键与开源linux命令功能键完全一致。虽说是新的触发的方式，但在底层实现上均是依靠break error 寄存器的读写来实现对sysrq的处理，依旧存在一些问题。</p>
+<p>如在nxp 的串口驱动实现，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">serial8250_read_char</span><span class="params">(struct uart_8250_port *up, <span class="keyword">unsigned</span> <span class="keyword">char</span> lsr)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">​	<span class="class"><span class="keyword">struct</span> <span class="title">uart_port</span> *<span class="title">port</span> = &amp;<span class="title">up</span>-&gt;<span class="title">port</span>;</span></span><br><span class="line">​	<span class="keyword">unsigned</span> <span class="keyword">char</span> ch;</span><br><span class="line">​	<span class="keyword">char</span> flag = TTY_NORMAL;</span><br><span class="line">​	<span class="keyword">if</span> (likely(lsr &amp; UART_LSR_DR))</span><br><span class="line">​		ch = serial_in(up, UART_RX);</span><br><span class="line">​	<span class="keyword">else</span></span><br><span class="line">​		<span class="comment">/*</span></span><br><span class="line"><span class="comment">​		 * Intel 82571 has a Serial Over Lan device that will</span></span><br><span class="line"><span class="comment">​		 * set UART_LSR_BI without setting UART_LSR_DR when</span></span><br><span class="line"><span class="comment">​		 * it receives a break. To avoid reading from the</span></span><br><span class="line"><span class="comment">​		 * receive buffer without UART_LSR_DR bit set, we</span></span><br><span class="line"><span class="comment">​		 * just force the read character to be 0</span></span><br><span class="line"><span class="comment">​		 */</span></span><br><span class="line">​		ch = <span class="number">0</span>;</span><br><span class="line">​	port-&gt;icount.rx++;</span><br><span class="line"></span><br><span class="line">​	<span class="comment">/*</span></span><br><span class="line"><span class="comment">  \* Add new keypress Ctrl+6 for Sysrq,</span></span><br><span class="line"><span class="comment">  \* 0x1e is the ASCII of Ctrl+6.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">​	<span class="keyword">if</span> (ch == <span class="number">0x1e</span>) &#123;</span><br><span class="line">​		<span class="keyword">if</span> (up-&gt;port.cons &amp;&amp; up-&gt;port.cons-&gt;index == up-&gt;port.<span class="built_in">line</span>)</span><br><span class="line">​				lsr |= UART_LSR_BI | UART_MSR_DCD;</span><br><span class="line">​	&#125;</span><br><span class="line"></span><br><span class="line">​	lsr |= up-&gt;lsr_saved_flags;</span><br><span class="line">​	up-&gt;lsr_saved_flags = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">​	<span class="keyword">if</span> (unlikely(lsr &amp; UART_LSR_BRK_ERROR_BITS)) &#123;</span><br><span class="line">​		<span class="keyword">if</span> (lsr &amp; UART_LSR_BI) &#123;</span><br><span class="line">​			lsr &amp;= ~(UART_LSR_FE | UART_LSR_PE);</span><br><span class="line">​			port-&gt;icount.brk++;</span><br><span class="line">​			<span class="comment">/*</span></span><br><span class="line"><span class="comment">​			 * We do the SysRQ and SAK checking</span></span><br><span class="line"><span class="comment">​			 * here because otherwise the break</span></span><br><span class="line"><span class="comment">​			 * may get masked by ignore_status_mask</span></span><br><span class="line"><span class="comment">​			 * or read_status_mask.</span></span><br><span class="line"><span class="comment">​			 */</span></span><br><span class="line">​			<span class="keyword">if</span> (uart_handle_break(port))</span><br><span class="line">​				<span class="keyword">return</span>;</span><br><span class="line">​		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (lsr &amp; UART_LSR_PE)</span><br><span class="line">​			port-&gt;icount.parity++;</span><br><span class="line">​		<span class="keyword">else</span> <span class="keyword">if</span> (lsr &amp; UART_LSR_FE)</span><br><span class="line">​			port-&gt;icount.frame++;</span><br><span class="line">​		<span class="keyword">if</span> (lsr &amp; UART_LSR_OE)</span><br><span class="line">​			port-&gt;icount.overrun++;</span><br><span class="line">​		<span class="comment">/*</span></span><br><span class="line"><span class="comment">​		 * Mask off conditions which should be ignored.</span></span><br><span class="line"><span class="comment">​		 */</span></span><br><span class="line">​		lsr &amp;= port-&gt;read_status_mask;</span><br><span class="line"></span><br><span class="line">​		<span class="keyword">if</span> (lsr &amp; UART_LSR_BI) &#123;</span><br><span class="line">​			pr_debug(<span class="string">"%s: handling break\n"</span>, __func__);</span><br><span class="line">​			flag = TTY_BREAK;</span><br><span class="line">​		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (lsr &amp; UART_LSR_PE)</span><br><span class="line">​			flag = TTY_PARITY;</span><br><span class="line">​		<span class="keyword">else</span> <span class="keyword">if</span> (lsr &amp; UART_LSR_FE)</span><br><span class="line">​			flag = TTY_FRAME;</span><br><span class="line">​	&#125;</span><br><span class="line">​	<span class="keyword">if</span> (uart_handle_sysrq_char(port, ch))</span><br><span class="line">​		<span class="keyword">return</span>;</span><br><span class="line">​	uart_insert_char(port, lsr, UART_LSR_OE, ch, flag);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是目前发现在PC进入睡眠时会发送一个break信号（具体没有通过示波器去测试到底是一个怎样的信号，但是最后结果会产生break error 寄存器的写入），从而误触发魔键，对于误触发的魔键，说简单点是一段可以忽略的打印，但严重的可能会导致单板进程挂掉或者重启（具体可见魔键的功能）。因此屏蔽掉魔键的break这种特殊触发方式，使其变得更加难已触发。</p>
+<p>具体为</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">if</span> (ch == <span class="number">0x1e</span>) &#123;</span><br><span class="line">​		<span class="keyword">if</span> (uart_handle_break(port))</span><br><span class="line">​				<span class="keyword">return</span>;</span><br><span class="line">​		<span class="comment">//if (up-&gt;port.cons &amp;&amp; up-&gt;port.cons-&gt;index == up-&gt;port.line)</span></span><br><span class="line">​		<span class="comment">//lsr |= UART_LSR_BI | UART_MSR_DCD;</span></span><br><span class="line">​	&#125;</span><br><span class="line">​	lsr |= up-&gt;lsr_saved_flags;</span><br><span class="line">​	up-&gt;lsr_saved_flags = <span class="number">0</span>;</span><br><span class="line">​	<span class="keyword">if</span> (unlikely(lsr &amp; UART_LSR_BRK_ERROR_BITS)) &#123;</span><br><span class="line">​		<span class="keyword">if</span> (lsr &amp; UART_LSR_BI) &#123;</span><br><span class="line">​			lsr &amp;= ~(UART_LSR_FE | UART_LSR_PE);</span><br><span class="line">​			port-&gt;icount.brk++;</span><br><span class="line">​			<span class="keyword">return</span>;</span><br><span class="line">​			<span class="comment">/*</span></span><br><span class="line"><span class="comment">​			 * We do the SysRQ and SAK checking</span></span><br><span class="line"><span class="comment">​			 * here because otherwise the break</span></span><br><span class="line"><span class="comment">​			 * may get masked by ignore_status_mask</span></span><br><span class="line"><span class="comment">​			 * or read_status_mask.</span></span><br><span class="line"><span class="comment">​			 */</span></span><br><span class="line">​			<span class="comment">//if (uart_handle_break(port))</span></span><br><span class="line">​				<span class="comment">//return;</span></span><br><span class="line">​		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (lsr &amp; UART_LSR_PE)</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+</div>
+
+<div class="cube-article-nav">
+    <ul>
+        
+        <li class="prev">
+            <a href="/2019/12/18/lock/">
+                <i class="cube-icon cube-prev" aria-hidden="true"></i>
+                lock
+            </a>
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+<!-- TODO 根据theme.comment的内容进行入口选择 -->
+
+
+
+        </div>
+        <div class="cube-right">
+            
+
+<div class="cube-search cube-sidebar" id="cube-search">
+    <div class="search-container">
+        <input type="text" placeholder="Search" class="cube-search-input" id="cube-search-input">
+        <i class="cube-icon cube-icon-search cube-search-submit" aria-hidden="true"></i>
+    </div>
+    <!-- TODO 通过给window赋一个全局变量，通过脚本赋值 -->
+</div>
+<script>
+    (function (window) {
+        'use strict';
+        window.searchModule = {}
+        window.searchModule.JSONUrl = '/content.json'
+        window.searchModule.rootUrl = '/'
+    })(window)
+</script>
+<div class="cube-search-form">
+    <div class="cube-search-control">
+        <input type="text" placeholder="Search" class="search-input">
+        <a class="close-button">
+            <i class="cube-icon cube-close" aria-hidden="true"></i>
+        </a>
+    </div>
+    <div class="cube-search-result"></div>
+</div>
+
+
+<div class="cube-author cube-sidebar" id="cube-author">
+    
+    
+    <span>John Doe</span>
+    
+    
+    <div class="count">
+        <a class="count articles"><span>3</span>Article</a>
+        <a class="count tags"><span>0</span>Tags</a>
+        <a class="count categories"><span>0</span>Categories</a>
+    </div>
+</div>
+
+
+
+<div class="cube-music cube-sidebar" id="cube-music">
+    <div class="cube-player aplayer" id="cube-player"></div>
+</div>
+<script>
+    (function (window) {
+        window.musicModule = {}
+        window.musicModule.musicConfig = '{"narrow":false,"autoplay":false,"showlrc":3,"theme":"#b7daff","mutex":true,"mode":"circulation","preload":"auto","listmaxheight":"513px","music":[{"title":"Dear friends","author":"TRIPLANE","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/TRIPLANE - Dear friends.mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/Dear friends - TRIPLANE.lrc","pic":"http://cube-1252774894.cosgz.myqcloud.com/music/image/TRIPLANE - Dear friends.jpg"},{"title":"Butter-Fly","author":"和田光司","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/和田光司 - Butter-Fly (ピアノヴァージョン).mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/Butter-Fly (ピアノヴァージョン) - 和田光司.lrc","pic":"http://cube-1252774894.cosgz.myqcloud.com/music/image/和田光司 - Butter-Fly (ピアノヴァージョン).jpg"},{"title":"宵闇花火","author":"葉月ゆら","url":"http://cube-1252774894.cosgz.myqcloud.com/music/source/葉月ゆら - 宵闇花火.mp3","lrc":"http://cube-1252774894.cosgz.myqcloud.com/music/lrc/宵闇花火 - 葉月ゆら.lrc","pic":"http://cube-1252774894.cosgz.myqcloud.com/music/image/葉月ゆら - 宵闇花火.jpg"}]}'
+        window.musicModule.lrcConfig = {
+            open: 'Open Lyrics',
+            close: 'Close Lyrics'
+        }
+    })(window)
+</script>
+
+
+
+<div class="cube-recent-posts cube-sidebar" id="cube-recent-posts">
+    <div class="title">
+        <a>Recent Posts</a>
+    </div>
+    <ul class="list">
+        
+        
+        <li>
+            <!-- TODO 如果文章要显示图片，那么在front-matter上添加preview属性(url or path) -->
+            
+            <div class="normal">
+                <p class="index first">
+                    <span>1</span>
+                </p>
+                <p class="title">
+                    <a href="/2019/12/18/hello-world/" title="Hello World">Hello World</a>
+                </p>
+            </div>
+            
+        </li>
+        
+        
+        
+        <li>
+            <div class="normal">
+                <p class="index">
+                    <span>2</span>
+                </p>
+                <p class="title">
+                    <a href="/2019/12/18/lock/" title="lock">lock</a>
+                </p>
+            </div>
+        </li>
+        
+        
+        
+        <li>
+            <div class="normal">
+                <p class="index">
+                    <span>3</span>
+                </p>
+                <p class="title">
+                    <a href="/2019/12/18/sysrq/" title="sysrq">sysrq</a>
+                </p>
+            </div>
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+
+
+
+
+
+<div class="cube-links cube-sidebar" id="cube-links">
+    <div class="title">
+        <a>Links</a>
+    </div>
+    <ul class="list">
+        
+        <li>
+            
+            
+            <img src="http://cube-1252774894.cosgz.myqcloud.com/links/GitHub.png">
+            
+            <a href="https://github.com/ZEROKISEKI" target="_blank">GitHub</a>
+        </li>
+        
+        <li>
+            
+            
+            <img src="http://cube-1252774894.cosgz.myqcloud.com/links/Coding.png">
+            
+            <a href="https://coding.net/u/SORA1" target="_blank">Coding</a>
+        </li>
+        
+        <li>
+            
+            
+            <img src="http://cube-1252774894.cosgz.myqcloud.com/links/SF.png">
+            
+            <a href="https://segmentfault.com/u/aonosora" target="_blank">SF社区</a>
+        </li>
+        
+        <li>
+            
+            
+            <img src="http://cube-1252774894.cosgz.myqcloud.com/links/开发者头条.png">
+            
+            <a href="https://toutiao.io/u/148070" target="_blank">开发者头条</a>
+        </li>
+        
+    </ul>
+</div>
+
+
+
+<div class="cube-friend-links cube-sidebar" id="cube-friend-links">
+    <div class="title">
+        <a>Friend Links</a>
+    </div>
+    <ul class="list">
+        
+        <li>
+            <!-- TODO change avatar.png to friend.png-->
+            <img src="http://cube-1252774894.cosgz.myqcloud.com/friend_links/micblo.png">
+            <a href="https://blog.micblo.com/" target="_blank">罗大佬</a>
+        </li>
+        
+        <li>
+            <!-- TODO change avatar.png to friend.png-->
+            <img src="http://cube-1252774894.cosgz.myqcloud.com/friend_links/DIYgod.jpg">
+            <a href="https://www.anotherhome.net/" target="_blank">DIYgod</a>
+        </li>
+        
+        <li>
+            <!-- TODO change avatar.png to friend.png-->
+            <img src="/images/friend_links.jpg ">
+            <a href="https://aonosora.com/" target="_blank">咪西西の部落格</a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer class="cube-footer">
+    
+© 2017 John Doe
+
+<br>
+Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>.&nbsp;Theme by <a href="https://github.com/ZEROKISEKI" target="_blank">AONOSORA</a>
+</footer>
+<!-- inject:script -->
+<script src="/js/script.js"></script>
+<!-- endinject -->
+<div class="cube-loading out"></div>
+</body>
+</html>
